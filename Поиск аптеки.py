@@ -33,7 +33,6 @@ json_response = response.json()
 
 # Получаем первую найденную организацию.
 organization = json_response["features"][0]
-print(organization)
 delta = str(max(find_spn(organization)))
 # Название организации.
 org_name = organization["properties"]["CompanyMetaData"]["name"]
