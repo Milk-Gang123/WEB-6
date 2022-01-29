@@ -1,6 +1,7 @@
 import requests
 from io import BytesIO
 from PIL import Image
+from functions import find_spn
 
 search_api_server = "https://search-maps.yandex.ru/v1/"
 api_key = "5b6bfc94-d671-429f-a00c-e3e24d455d66"
@@ -20,13 +21,6 @@ if not response:
     #...
     pass
 
-
-def find_spn(response):
-    a = response['properties']['boundedBy'][0]
-    b = response['properties']['boundedBy'][1]
-    delta_x = abs(a[0] - b[0])
-    delta_y = abs(a[1] - b[1])
-    return (delta_x, delta_y)
 
 # Преобразуем ответ в json-объект
 json_response = response.json()
