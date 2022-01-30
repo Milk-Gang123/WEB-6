@@ -42,3 +42,14 @@ def find_delta(search_api_server, search_params):
         else:
             delta *= 2
     return delta
+
+
+def find_object_spn(response):
+    low = response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]['boundedBy']['Envelope']['lowerCorner']
+    up = response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]['boundedBy']['Envelope']['upperCorner']
+    low = [float(i) for i in low.split()]
+    up = [float(i) for i in up.split()]
+    delta_x = abs(low[0] - up[0]) / 2
+    delta_y = abs(low[1] - up[1]) / 2
+    return max(delta_x, delta_y)
+
