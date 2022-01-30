@@ -1,6 +1,5 @@
 import argparse
-import math
-from functions import lonlat_distance
+from functions import find_delta
 import requests
 from io import BytesIO
 from PIL import Image
@@ -22,31 +21,29 @@ search_params = {
     "lang": "ru_RU",
     "ll": address_ll,
     "type": "biz",
-    "results": '10'
 }
-
+find_delta(search_api_server, search_params)
 response = requests.get(search_api_server, params=search_params)
 if not response:
-    #...
     pass
 
 
 json_response = response.json()
 points = ''
-for i in json_response['features'][:11]:
+for i in json_response['features']:
     organization = i
     point = organization["geometry"]["coordinates"]
     org_point = "{0},{1}".format(point[0], point[1])
     try:
         working_hours = organization["properties"]["CompanyMetaData"]["Hours"]['Availabilities'][0]['Intervals'][0]
-        points += f'{org_point},pm2dbm~'
+        points += f'{org_point},pm2bll~'
     except Exception:
         try:
             working_hours = organization["properties"]["CompanyMetaData"]["Hours"]['Availabilities'][0]['TwentyFourHours']
             if working_hours is True:
-                points += f'{org_point},pm2dgm~'
+                points += f'{org_point},pm2gnl~'
         except Exception:
-            points += f'{org_point},pm2grm~'
+            points += f'{org_point},pm2grl~'
 points = points[:-1]
 map_params = {
     "l": "map",

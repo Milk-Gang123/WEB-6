@@ -1,5 +1,7 @@
 import math
 
+import requests
+
 
 def find_spn(response):
     a = response['properties']['boundedBy'][0]
@@ -27,3 +29,16 @@ def lonlat_distance(a, b):
     distance = math.sqrt(dx * dx + dy * dy)
 
     return distance
+
+
+def find_delta(search_api_server, search_params):
+    delta = 0.001
+    while True:
+        search_params['spn'] = f'{delta},{delta}'
+        response = requests.get(search_api_server, params=search_params)
+        number = len(response.json()['features'])
+        if number >= 10:
+            break
+        else:
+            delta *= 2
+    return delta
