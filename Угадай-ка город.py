@@ -1,9 +1,10 @@
 import random
-from functions import find_object_spn
+from functions import find_object_spn, get_specify_spn
 import requests
 import pygame
 
 k = 0
+SCREEN_SIZE = (600, 450)
 cities =  ['Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань', 'Нижний Новгород',
           'Челябинск', 'Самара', 'Омск', 'Ростов-на-Дону', 'Сочи', 'Владивосток']
 random.shuffle(cities)
@@ -18,13 +19,13 @@ for i in cities:
     adr_resp = requests.get(adr_req).json()
     address_ll = ','.join(adr_resp["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].split())
     delta = find_object_spn(adr_resp)
-    delta = delta - delta * 0.75
+    delta = get_specify_spn(delta[0], delta[1], SCREEN_SIZE)
     search_params = {
         "apikey": api_key,
         "ll": address_ll,
         "l": random.choice(maps),
         "format": "json",
-        "spn": f'{delta},{delta}'
+        "spn": f'{delta[0]},{delta[1]}'
     }
     response = requests.get(search_api_server, params=search_params)
     responses.append(response)
@@ -34,7 +35,7 @@ with open(map_file, "wb") as file:
     response = responses[k]
     file.write(response.content)
 
-screen = pygame.display.set_mode((600, 450))
+screen = pygame.display.set_mode(SCREEN_SIZE)
 running = True
 
 while running:
@@ -45,8 +46,12 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 k += 1
+                if not 12 > k >= 0:
+                    k -= 1
             elif event.key == pygame.K_LEFT:
                 k -= 1
+                if not 12 > k >= 0:
+                    k += 1
             with open(map_file, "wb") as file:
                 file.write(responses[k].content)
     pygame.display.flip()

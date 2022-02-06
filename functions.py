@@ -49,7 +49,16 @@ def find_object_spn(response):
     up = response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]['boundedBy']['Envelope']['upperCorner']
     low = [float(i) for i in low.split()]
     up = [float(i) for i in up.split()]
-    delta_x = abs(low[0] - up[0]) / 2
-    delta_y = abs(low[1] - up[1]) / 2
-    return max(delta_x, delta_y)
+    delta_x = abs(low[0] - up[0])
+    delta_y = abs(low[1] - up[1])
+    return delta_x, delta_y
+
+
+def get_specify_spn(delta_x, delta_y, scr_size):
+    delta_y = delta_y * (scr_size[1] / scr_size[0]) * 0.08
+    delta_x = delta_x * 0.08
+    while delta_x > 0.05:
+        delta_x -= delta_x * 0.1
+        delta_y -= delta_y * 0.1
+    return delta_x, delta_y
 
