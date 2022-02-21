@@ -30,7 +30,7 @@ for i in cities:
     response = requests.get(search_api_server, params=search_params)
     responses.append(response)
 
-map_file = "map.png"
+map_file = "img/map.png"
 with open(map_file, "wb") as file:
     response = responses[k]
     file.write(response.content)
